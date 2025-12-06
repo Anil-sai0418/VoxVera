@@ -8,17 +8,17 @@ import Page from './pages/Page'
 import Home from './pages/Home'
 
 function App() {
-
-
   return (
-  <BrowserRouter>
-    <Routes>
-     <Route path="/page" element={<Page />} />
-
-      <Route path="/" element={<Home/>} />
-      <Route path="/contact" element={<h1>Contact Page</h1>} />
-    </Routes>
-  </BrowserRouter>
+  // top-level wrapper uses CSS variables defined in src/index.css
+  <div className="min-h-screen text-theme">
+      <BrowserRouter>
+        <Routes>
+          <Route path="/page" element={<Page />} />
+          <Route path="/" element={<Home/>} />
+          <Route path="/contact" element={<h1>Contact Page</h1>} />
+        </Routes>
+      </BrowserRouter>
+    </div>
   )
 }
 

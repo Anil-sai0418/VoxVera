@@ -10,7 +10,7 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { Palette } from "lucide-react";
-import { useThemeConfig } from "../ui/active-theme";
+import { useThemeConfig } from "./theme-context";
 
 const DEFAULT_THEMES = [
   {

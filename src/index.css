@@ -1,1 +1,127 @@
 @import "tailwindcss";
+
+/* Theme CSS variables. Active theme classes are applied to <html> as `theme-<name>`.
+	 The ActiveThemeProvider sets the class on the documentElement. */
+
+:root {
+	/* sensible light defaults */
+	--bg: #ffffff;
+	--text: #0f172a; /* slate-900 */
+	--muted: #6b7280; /* gray-500 */
+	--primary: #2563eb; /* blue-600 */
+	--card: #f8fafc; /* gray-50 */
+}
+
+.theme-default {
+	--bg: #ffffff;
+	--text: #0f172a;
+	--muted: #6b7280;
+	--primary: #2563eb;
+	--card: #f8fafc;
+}
+
+.theme-blue {
+	--bg: #0f172a; /* dark slate */
+	--text: #e6f0ff; /* light text */
+	--muted: #9fb3d9;
+	--primary: #60a5fa; /* blue-400 */
+	--card: #071133;
+}
+
+.theme-mono {
+	--bg: #0b0b0b;
+	--text: #e5e7eb; /* gray-200 */
+	--muted: #9ca3af;
+	--primary: #9ca3af;
+	--card: #111827;
+}
+
+.theme-teal {
+	--bg: #ecfeff;
+	--text: #064e3b;
+	--muted: #0f766e;
+	--primary: #14b8a6; /* teal-400 */
+	--card: #e6fffa;
+}
+
+/* Scaled modifier: slightly larger base font for accessibility */
+.theme-scaled {
+	font-size: 112%;
+}
+
+/* Apply variables globally */
+html, body, #root {
+	background-color: var(--bg);
+	color: var(--text);
+}
+
+/* Make a few commonly used utility classes respect variables */
+.bg-theme {
+	background-color: var(--bg) !important;
+}
+.text-theme {
+	color: var(--text) !important;
+}
+.card-theme {
+	background-color: var(--card) !important;
+	color: var(--text) !important;
+}
+
+/* Button system using CSS variables so buttons follow the chosen theme */
+.btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	border-radius: 9999px;
+	padding: 0.6rem 1rem;
+	font-weight: 600;
+	transition: transform 160ms ease, box-shadow 180ms ease, background-color 180ms ease;
+	box-shadow: 0 6px 18px rgba(2,6,23,0.08);
+	cursor: pointer;
+}
+
+.btn:active { transform: translateY(1px) scale(0.998); }
+.btn:focus { outline: none; box-shadow: 0 6px 22px rgba(2,6,23,0.12); }
+
+.btn-primary {
+	background: linear-gradient(180deg, var(--primary), color-mix(in srgb, var(--primary) 85%, black 15%));
+	color: white;
+}
+
+.btn-secondary {
+	background: color-mix(in srgb, var(--card) 80%, var(--primary) 20%);
+	color: var(--text);
+}
+
+.btn-outline {
+	background: transparent;
+	border: 1px solid color-mix(in srgb, var(--primary) 60%, black 10%);
+	color: var(--text);
+}
+
+.btn-ghost {
+	background: transparent;
+	color: var(--text);
+}
+
+.btn-destructive {
+	background: linear-gradient(180deg, #ef4444, #dc2626);
+	color: white;
+}
+
+.btn-link {
+	background: transparent;
+	color: var(--primary);
+	padding: 0;
+	border-radius: 0.25rem;
+}
+
+/* Hero tweaks to make the page more polished */
+.hero-card {
+	background: linear-gradient(180deg, color-mix(in srgb, var(--card) 80%, white 10%), transparent);
+	border-radius: 14px;
+	padding: 2rem;
+	box-shadow: 0 10px 30px rgba(2,6,23,0.08);
+}
+
