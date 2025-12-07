@@ -8,7 +8,7 @@ import ThemeChanger from '../components/ui/theme-color-toggler'
 export default function Nav() {
   const navigate = useNavigate()
   return (
-    <div className='w-full h-[60px] flex items-center justify-between px-6 shadow-md bg-[var(--bg)] text-[var(--text)]'>
+    <div className='w-full h-[60px] flex items-center justify-between px-6 bg-gradient-to-br from-slate-50 to-blue-50'>
 
       <div className="flex items-center gap-3">
         <Button onClick={() => navigate('/')} variant="ghost" className="flex items-center px-4 py-2 text-lg">
@@ -17,10 +17,10 @@ export default function Nav() {
         </Button>
       </div>
       
-      <div className="flex items-center gap-4">
+      {/* <div className="flex items-center gap-4">
         <ModeToggle />
         <ThemeChanger />
-      </div>
+      </div> */}
 
     </div>
   )

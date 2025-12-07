@@ -1,220 +1,195 @@
 import React, { useState } from "react";
-import translateText from "./ translateText";
+import translateText from "../chunks/ translateText";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "../components/ui/select";
-import { Kbd, KbdGroup } from "../components/ui/kbd";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
+AlertDialog,
+AlertDialogAction,
+AlertDialogCancel,
+AlertDialogContent,
+AlertDialogDescription,
+AlertDialogFooter,
+AlertDialogHeader,
+AlertDialogTitle,
+AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "../components/ui/button";
+import { ArrowLeftRight } from "lucide-react";
 import Loader from "../components/ui/loader";
-
-
 function Translator() {
-  const [input, setInput] = useState("");
-  // Store translations as an array of { source, translated }
-  const [translations, setTranslations] = useState([]);
-  const [sourceLang, setSourceLang] = useState("en");
-  const [targetLang, setTargetLang] = useState("te");
-  const [isTranslating, setIsTranslating] = useState(false);
-  
-
-  const handleTranslate = async () => {
-    if (!input || !input.trim()) return;
-
-    // Split input into paragraphs separated by one or more blank lines.
-    const paragraphs = input
+const [input, setInput] = useState("");
+const [translations, setTranslations] = useState([]);
+const [sourceLang, setSourceLang] = useState("en");
+const [targetLang, setTargetLang] = useState("te");
+const [isTranslating, setIsTranslating] = useState(false);
+const handleTranslate = async () => {
+if (!input || !input.trim()) return;
+const paragraphs = input
       .split(/\n\s*\n+/)
       .map((p) => p.trim())
       .filter(Boolean);
-
-    if (paragraphs.length === 0) return;
-
-  // Clear previous translations so a fresh Translate replaces the earlier output
-  setTranslations([]);
-
-  setIsTranslating(true);
-    try {
-        // Translate each paragraph sequentially to preserve order and append
-        for (const para of paragraphs) {
-          const translated = await translateText(para, sourceLang, targetLang);
-
-          // Append new translation block
-          setTranslations((prev) => [...prev, { source: para, translated }]);
-        }
+if (paragraphs.length === 0) return;
+setTranslations([]);
+setIsTranslating(true);
+try {
+for (const para of paragraphs) {
+const translated = await translateText(para, sourceLang, targetLang);
+setTranslations((prev) => [...prev, { source: para, translated }]);
+      }
     } finally {
-      setIsTranslating(false);
-      // Optionally clear the input after translating; comment out if you prefer to keep it
-      // setInput("");
+setIsTranslating(false);
     }
   };
-
-  // Keyboard handler: allow Cmd/Ctrl+Enter to trigger translation without
-  // preventing normal Enter (newline) behavior.
-  const handleKeyDown = (e) => {
-    if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
-      e.preventDefault();
-      // Call translate only if not already translating
-      if (!isTranslating) handleTranslate();
+const handleSwap = () => {
+setSourceLang(targetLang);
+setTargetLang(sourceLang);
+};
+const handleKeyDown = (e) => {
+if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+e.preventDefault();
+if (!isTranslating) handleTranslate();
     }
-    // (Clear shortcut removed) — Ctrl/Cmd+Delete handler removed to avoid conflicts.
   };
-
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-start p-6 bg-gray-100">
-      <Loader visible={isTranslating} text="Translating..." />
-      <h2 className="text-3xl font-bold mb-6 text-gray-800">Language Translator</h2>
-
-      <div className="w-full max-w-6xl flex flex-col md:flex-row gap-6 items-start">
-        {/* Left: input */}
-        <div className="w-full md:w-1/2 flex flex-col">
-          <div className="flex gap-3 mb-4">
-            <div>
-              <label className="text-sm text-gray-600 block mb-1">Source</label>
-              <Select value={sourceLang} onValueChange={(v) => setSourceLang(v)}>
-                <SelectTrigger className="w-40">
-                  <SelectValue placeholder="Source" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="en">English</SelectItem>
-                  <SelectItem value="hi">Hindi</SelectItem>
-                  <SelectItem value="te">Telugu</SelectItem>
-                  <SelectItem value="es">Spanish</SelectItem>
-                  <SelectItem value="fr">French</SelectItem>
-                  <SelectItem value="de">German</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <label className="text-sm text-gray-600 block mb-1">Target</label>
-              <Select value={targetLang} onValueChange={(v) => setTargetLang(v)}>
-                <SelectTrigger className="w-40">
-                  <SelectValue placeholder="Target" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="en">English</SelectItem>
-                  <SelectItem value="hi">Hindi</SelectItem>
-                  <SelectItem value="te">Telugu</SelectItem>
-                  <SelectItem value="es">Spanish</SelectItem>
-                  <SelectItem value="fr">French</SelectItem>
-                  <SelectItem value="de">German</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Enter text"
-            className="w-full h-64 p-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 bg-white"
-          />
-
-          {/* <div className="text-xs text-gray-500 mb-3">
-            Shortcut:
-            <span className="ml-2 inline-block">
-              <KbdGroup>
-                <Kbd className="bg-gray-800 w-[15px] text-white">^</Kbd>
-                <span className="mx-1 text-xs text-gray-400">/</span>
-                <Kbd className="bg-gray-800 text-white">Cmd</Kbd>
-                <span className="mx-2 text-xs text-gray-400">+</span>
-                <Kbd className="bg-gray-800 text-white">Enter</Kbd>
-              </KbdGroup>
-            </span>
-          </div> */}
-
-          <p className="text-sm text-gray-500 mb-4">Paste multiple paragraphs (separated by blank lines) or multiple inputs; click Translate once to translate all paragraphs — results will be appended on the right. Use Clear to reset.</p>
-
-          <div className="flex gap-3 items-center">
-            {/* Translate button with hover tooltip showing shortcut (Ctrl/Cmd + Enter). */}
-            <div className="relative group inline-block">
-              <button
-                onClick={handleTranslate}
-                disabled={isTranslating}
-                className={"px-6 py-2 text-white font-semibold rounded-lg shadow transition " + (isTranslating ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700")}
-              >
-                {isTranslating ? "Translating..." : "Translate"}
-              </button>
-
-              {/* Tooltip: appears on hover or focus of the button (group) */}
-              <div className="pointer-events-none absolute left-1/2 -bottom-10 z-50 -translate-x-1/2 transform opacity-0 scale-95 transition-all duration-150 group-hover:opacity-100 group-focus-within:opacity-100 group-hover:scale-100">
-                <div className="bg-white border border-gray-200 text-sm text-gray-700 rounded-md px-2 py-1 shadow-md flex items-center gap-2">
-
-                  <KbdGroup>
-                    <Kbd className="bg-gray-800 w-5 text-white">⌃</Kbd>
-                    <span className="mx-1 text-xs text-gray-400">/</span>
-                    <Kbd className="bg-gray-800 text-white">⌘</Kbd>
-                    <span className="mx-2 text-xs text-gray-400">+</span>
-                    <Kbd className="bg-gray-800 text-white">⏎</Kbd>
-                  </KbdGroup>
-                </div>
-              </div>
-            </div>
-
-            {input && input.trim() ? (
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <button
-                    disabled={isTranslating}
-                    className={"px-4 py-2 text-gray-800 font-medium rounded-lg shadow transition " + (isTranslating ? "bg-gray-200 cursor-not-allowed" : "bg-gray-300 hover:bg-gray-400")}
-                  >
-                    Clear
-                  </button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Clear translations?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This will remove all translated output. This action cannot be undone.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => setTranslations([])}>Continue</AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            ) : (
-              <button
-                onClick={() => setTranslations([])}
-                disabled={isTranslating}
-                className={"px-4 py-2 text-gray-800 font-medium rounded-lg shadow transition " + (isTranslating ? "bg-gray-200 cursor-not-allowed" : "bg-gray-300 hover:bg-gray-400")}
-              >
-                Clear
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Right: output */}
-        <div className="w-full md:w-1/2">
-          <h3 className="text-xl font-semibold text-gray-700 mb-13">Output</h3>
-          <div className="w-full p-4 bg-white border border-gray-300 rounded-lg shadow-sm min-h-64">
-            {translations.length > 0 ? (
-              translations.map((t, i) => (
-                <div key={i} className="mb-4 whitespace-pre-wrap">
-                  {t.translated}
-                </div>
-              ))
-            ) : (
-              <div className="text-gray-400">No translations yet.</div>
-            )}
-          </div>
-          <Button>Button</Button>
-         
-        </div>
-      </div>
-    </div>
+const clearAll = () => {
+setInput("");
+setTranslations([]);
+  };
+return (
+<div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-8 px-4 sm:px-6 lg:px-8">
+<Loader visible={isTranslating} text="Translating paragraphs..." />
+<div className="max-w-7xl mx-auto">
+<div className="text-center mb-8">
+<h1 className="text-4xl font-bold text-blue-700 mb-2">VoxVera</h1>
+<p className="text-lg text-gray-600 max-w-2xl mx-auto">
+    Easily translate text between multiple languages. Paste your paragraphs, and get them translated all at once.
+</p>
+</div>
+<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Input Panel */}
+<div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+<div className="flex flex-col sm:flex-row gap-4 mb-6 items-end sm:items-start">
+<div className="flex-1">
+<label className="text-sm font-medium text-gray-700 block mb-2">Source Language</label>
+<Select value={sourceLang} onValueChange={setSourceLang}>
+<SelectTrigger className="w-full">
+<SelectValue />
+</SelectTrigger>
+<SelectContent>
+<SelectItem value="en">English</SelectItem>
+<SelectItem value="hi">Hindi</SelectItem>
+<SelectItem value="te">Telugu</SelectItem>
+<SelectItem value="es">Spanish</SelectItem>
+<SelectItem value="fr">French</SelectItem>
+<SelectItem value="de">German</SelectItem>
+</SelectContent>
+</Select>
+</div>
+<div className="flex justify-center sm:flex-none">
+<Button
+type="button"
+variant="ghost"
+size="sm"
+onClick={handleSwap}
+className="p-2 -mt-2 sm:mt-7"
+disabled={sourceLang === targetLang}
+>
+<ArrowLeftRight className="h-4 w-4" />
+</Button>
+</div>
+<div className="flex-1">
+<label className="text-sm font-medium text-gray-700 block mb-2">Target Language</label>
+<Select value={targetLang} onValueChange={setTargetLang}>
+<SelectTrigger className="w-full">
+<SelectValue />
+</SelectTrigger>
+<SelectContent>
+<SelectItem value="en">English</SelectItem>
+<SelectItem value="hi">Hindi</SelectItem>
+<SelectItem value="te">Telugu</SelectItem>
+<SelectItem value="es">Spanish</SelectItem>
+<SelectItem value="fr">French</SelectItem>
+<SelectItem value="de">German</SelectItem>
+</SelectContent>
+</Select>
+</div>
+</div>
+<textarea
+value={input}
+onChange={(e) => setInput(e.target.value)}
+onKeyDown={handleKeyDown}
+placeholder="Enter your text here... Use blank lines to separate paragraphs."
+className="w-full h-64 p-4 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+/>
+<div className="mt-4 flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
+<p className="text-xs text-gray-500 flex-1 sm:flex-none">
+<kbd className="bg-gray-200 px-1.5 py-0.5 rounded text-xs font-mono mr-1">⌘</kbd> +{" "}
+<kbd className="bg-gray-200 px-1.5 py-0.5 rounded text-xs font-mono">Enter</kbd> to translate
+</p>
+<div className="flex gap-3">
+<Button
+onClick={handleTranslate}
+disabled={isTranslating || !input.trim()}
+className="px-6 py-2 font-medium"
+variant={isTranslating ? "secondary" : "default"}
+>
+                  {isTranslating ? "Translating..." : "Translate"}
+</Button>
+                {(input.trim() || translations.length > 0) && (
+<AlertDialog>
+<AlertDialogTrigger asChild>
+<Button variant="outline" disabled={isTranslating}>
+                        Clear All
+</Button>
+</AlertDialogTrigger>
+<AlertDialogContent>
+<AlertDialogHeader>
+<AlertDialogTitle>Clear everything?</AlertDialogTitle>
+<AlertDialogDescription>
+                          This will remove your input and all translations. This action cannot be undone.
+</AlertDialogDescription>
+</AlertDialogHeader>
+<AlertDialogFooter>
+<AlertDialogCancel>Cancel</AlertDialogCancel>
+<AlertDialogAction onClick={clearAll}>Clear</AlertDialogAction>
+</AlertDialogFooter>
+</AlertDialogContent>
+</AlertDialog>
+                )}
+</div>
+</div>
+</div>
+          {/* Output Panel */}
+<div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+<h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+              Translations
+              {translations.length > 0 && (
+<span className="ml-2 text-sm text-gray-500 font-normal">({translations.length} paragraphs)</span>
+              )}
+</h2>
+<div className="h-64 overflow-y-auto bg-gray-50 rounded-lg p-4 border border-gray-200">
+              {translations.length > 0 ? (
+<div className="space-y-6">
+                  {translations.map((t, i) => (
+<div key={i} className="space-y-2">
+<div className="bg-white p-3 rounded-md border-l-4 border-blue-500">
+<p className="text-sm text-gray-800 whitespace-pre-wrap">{t.source}</p>
+</div>
+<div className="bg-white p-3 rounded-md border-l-4 border-green-500">
+<p className="text-sm text-gray-800 whitespace-pre-wrap font-medium">{t.translated}</p>
+</div>
+</div>
+                  ))}
+</div>
+              ) : (
+<div className="flex flex-col items-center justify-center h-full text-gray-400">
+<p className="text-sm">No translations yet.</p>
+<p className="text-xs mt-1">Translate some text on the left to get started.</p>
+</div>
+              )}
+</div>
+</div>
+</div>
+</div>
+</div>
   );
 }
-
 export default Translator;

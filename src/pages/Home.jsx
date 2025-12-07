@@ -15,7 +15,7 @@ function Home() {
   const [mounted, setMounted] = useState(false);
 
   function handleGetStarted() {
-    navigate('/page');
+    navigate('/Translator');
   }
 
   useEffect(() => {
@@ -23,7 +23,7 @@ function Home() {
     const id = setTimeout(() => setMounted(true), 0);
     const handleKeyPress = (e) => {
       if (e.key === 'Enter') {
-        navigate('/page');
+        navigate('/Translator');
       }
     };
     window.addEventListener('keydown', handleKeyPress);

@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 import Page from './pages/Page'
 import Home from './pages/Home'
+import Null from './chunks/Null'
+import About from './chunks/About'
 
 function App() {
   return (
@@ -13,9 +15,11 @@ function App() {
   <div className="min-h-screen text-theme">
       <BrowserRouter>
         <Routes>
-          <Route path="/page" element={<Page />} />
+          <Route path="/Translator" element={<Page />} />
+           <Route path="/About" element={<About />} />
           <Route path="/" element={<Home/>} />
-          <Route path="/contact" element={<h1>Contact Page</h1>} />
+          <Route path="*" element={<Null/>} />
+
         </Routes>
       </BrowserRouter>
     </div>
