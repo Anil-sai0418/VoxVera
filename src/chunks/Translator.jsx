@@ -14,6 +14,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "../components/ui/button";
+import Loader from "../components/ui/loader";
 
 
 function Translator() {
@@ -68,6 +69,7 @@ function Translator() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-start p-6 bg-gray-100">
+      <Loader visible={isTranslating} text="Translating..." />
       <h2 className="text-3xl font-bold mb-6 text-gray-800">Language Translator</h2>
 
       <div className="w-full max-w-6xl flex flex-col md:flex-row gap-6 items-start">

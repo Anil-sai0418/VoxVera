@@ -14,12 +14,16 @@ function Home() {
   const navigate = useNavigate();
   const [mounted, setMounted] = useState(false);
 
+  function handleGetStarted() {
+    navigate('/page');
+  }
+
   useEffect(() => {
     // defer setMounted to avoid synchronous state update inside effect
     const id = setTimeout(() => setMounted(true), 0);
     const handleKeyPress = (e) => {
       if (e.key === 'Enter') {
-        handleGetStarted();
+        navigate('/page');
       }
     };
     window.addEventListener('keydown', handleKeyPress);
@@ -27,11 +31,7 @@ function Home() {
       clearTimeout(id);
       window.removeEventListener('keydown', handleKeyPress);
     };
-  }, []);
-
-  function handleGetStarted() {
-    navigate('/page');
-  }
+  }, [navigate]);
 
   return (
   <div className="relative min-h-screen flex flex-col items-center justify-center px-4 overflow-hidden text-theme selection:bg-blue-100">
