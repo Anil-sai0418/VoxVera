@@ -11,5 +11,6 @@ export default defineConfig({
     alias: {
       "@": path.resolve(path.dirname(fileURLToPath(import.meta.url)), "./src"),
     },
+    base:"/VoxVera"
   },
 })
