@@ -26,7 +26,7 @@ function Footer() {
           <ul className="space-y-2 text-sm text-gray-600">
             <li><a href="/" className="hover:text-purple-600 transition">Home</a></li>
             <li><a href="/Translator" className="hover:text-purple-600 transition">Translator</a></li>
-            <li><a href="/features" className="hover:text-purple-600 transition">Features</a></li>
+
             <li><a href="/about" className="hover:text-purple-600 transition">About Voxvera</a></li>
           </ul>
         </div>
