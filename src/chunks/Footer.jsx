@@ -13,6 +13,7 @@ function Footer() {
               alt="Voxvera Logo"
               className="w-12 h-12 object-contain"
             />
+
             <h2 className="text-xl font-bold text-gray-900">Voxvera</h2>
           </div>
           <p className="text-sm text-gray-600 leading-relaxed">
@@ -27,7 +28,7 @@ function Footer() {
             <li><a href="/" className="hover:text-purple-600 transition">Home</a></li>
             <li><a href="/Translator" className="hover:text-purple-600 transition">Translator</a></li>
 
-            <li><a href="/about" className="hover:text-purple-600 transition">About Voxvera</a></li>
+            <li><a href="/About" className="hover:text-purple-600 transition">About Voxvera</a></li>
           </ul>
         </div>
       
