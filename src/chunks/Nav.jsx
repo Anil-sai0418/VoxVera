@@ -12,8 +12,8 @@ export default function Nav() {
 
       <div className="flex items-center gap-3">
         <Button onClick={() => navigate('/')} variant="ghost" className="flex items-center px-4 py-2 text-lg">
-          <ArrowLeft className="mr-2 w-6 h-6" />
-          Back
+          <ArrowLeft className="w-6 h-6" />
+          <span className="hidden lg:inline ml-2">Back</span>
         </Button>
       </div>
       

@@ -59,21 +59,21 @@ function Translator() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8">
       <Loader visible={isTranslating} text="Translating paragraphs..." />
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-8 px-2 sm:px-0">
-          <h1 className="text-4xl sm:text-5xl font-bold text-blue-700 mb-2">VoxVera</h1>
-          <p className="text-md sm:text-lg text-gray-600 max-w-2xl mx-auto">
+          <h1 className="text-4xl sm:text-5xl font-semibold text-blue-800 mb-3">VoxVera</h1>
+          <p className="hidden lg:block text-md lg:text-lg text-gray-600 max-w-2xl mx-auto">
             Easily translate text between multiple languages. Paste your paragraphs, and get them translated all at once.
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
           {/* Input Panel */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 flex flex-col">
-            <div className="flex flex-col sm:flex-row gap-4 mb-4 sm:items-end">
-              <div className="flex-1">
+          <div className="bg-white rounded-lg border border-gray-200 p-5 flex flex-col">
+            <div className="flex flex-col sm:flex-row gap-6 mb-6 sm:items-center justify-between">
+              <div className="flex-1 bg-white p-4 rounded-lg border border-gray-300">
                 <label className="text-sm font-medium text-gray-700 block mb-2">Source Language</label>
                 <Select value={sourceLang} onValueChange={setSourceLang}>
                   <SelectTrigger className="w-full">
@@ -90,20 +90,20 @@ function Translator() {
                 </Select>
               </div>
 
-              <div className="flex justify-center sm:flex-none">
+              <div className="flex justify-center items-center">
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
                   onClick={handleSwap}
-                  className="p-2 sm:mt-7 -mt-2"
+                  className="p-2 bg-white rounded-full border border-gray-300 hover:bg-gray-100 transition"
                   disabled={sourceLang === targetLang}
                 >
                   <ArrowLeftRight className="h-5 w-5" />
                 </Button>
               </div>
 
-              <div className="flex-1">
+              <div className="flex-1 bg-white p-4 rounded-lg border border-gray-300">
                 <label className="text-sm font-medium text-gray-700 block mb-2">Target Language</label>
                 <Select value={targetLang} onValueChange={setTargetLang}>
                   <SelectTrigger className="w-full">
@@ -126,11 +126,11 @@ function Translator() {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Enter your text here... Use blank lines to separate paragraphs."
-              className="w-full h-52 sm:h-64 p-3 sm:p-4 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+              className="w-full h-52 sm:h-64 p-4 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-1 focus:ring-gray-400 text-sm bg-white"
             />
 
             <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
-              <p className="text-xs text-gray-500 flex-1 sm:flex-none">
+              <p className="hidden lg:block text-xs text-gray-500 flex-1">
                 <kbd className="bg-gray-200 px-1.5 py-0.5 rounded text-xs font-mono mr-1">⌘</kbd> +{" "}
                 <kbd className="bg-gray-200 px-1.5 py-0.5 rounded text-xs font-mono">Enter</kbd> to translate
               </p>
@@ -169,7 +169,7 @@ function Translator() {
           </div>
 
           {/* Output Panel */}
-         <div className="bg-white h-[500px] rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 flex flex-col">
+         <div className="bg-white h-[500px] rounded-lg border border-gray-200 p-5 flex flex-col">
   <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4 flex items-center">
     Translations
     {translations.length > 0 && (
@@ -184,10 +184,10 @@ function Translator() {
       <div className="space-y-4 sm:space-y-6">
         {translations.map((t, i) => (
           <div key={i} className="space-y-2">
-            <div className="bg-white p-2 sm:p-3 rounded-md border-l-4 border-blue-500">
+            <div className="bg-gray-100 p-3 rounded-md border border-gray-200">
               <p className="text-sm sm:text-base text-gray-800 whitespace-pre-wrap">{t.source}</p>
             </div>
-            <div className="bg-white p-2 sm:p-3 rounded-md border-l-4 border-green-500">
+            <div className="bg-gray-100 p-3 rounded-md border border-gray-300">
               <p className="text-sm sm:text-base text-gray-800 whitespace-pre-wrap font-medium">{t.translated}</p>
             </div>
           </div>
