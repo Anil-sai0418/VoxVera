@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "../components/ui/button";
 import { ArrowLeftRight, ArrowUp, ArrowDown } from "lucide-react";
-import { Maximize2, Minimize2 } from "lucide-react";
+import { Maximize2, Minimize2, Copy } from "lucide-react";
 import Loader from "../components/ui/loader";
 
 function Translator() {
@@ -25,6 +25,9 @@ function Translator() {
   const [isTranslating, setIsTranslating] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const containerRef = useRef(null);
+
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
   // Fullscreen logic
   const handleFullscreenToggle = () => {
@@ -93,6 +96,32 @@ function Translator() {
   const clearAll = () => {
     setInput("");
     setTranslations([]);
+  };
+
+  // Copy all translated text as a single block
+  const handleCopyAll = () => {
+    if (translations.length === 0) return;
+
+    const allText = translations
+      .map((t) => t.translated.trim())
+      .join("\n\n");
+
+    navigator.clipboard.writeText(allText);
+
+    setToastMessage("All translated text copied!");
+    setShowToast(true);
+
+    setTimeout(() => setShowToast(false), 2000);
+  };
+
+  // Copy a single translated paragraph
+  const handleCopyOne = (text) => {
+    navigator.clipboard.writeText(text);
+
+    setToastMessage("Translation copied!");
+    setShowToast(true);
+
+    setTimeout(() => setShowToast(false), 2000);
   };
 
   return (
@@ -218,7 +247,7 @@ function Translator() {
           {/* Output Panel */}
          <div className="bg-white h-[500px] rounded-lg border border-gray-200 p-5 flex flex-col">
 
-    <div className="flex items-center justify-between mb-4">
+    <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
       <h2 className="text-lg sm:text-xl font-semibold text-gray-900 flex items-center">
         Translations
         {translations.length > 0 && (
@@ -227,14 +256,33 @@ function Translator() {
           </span>
         )}
       </h2>
-      <button
-        onClick={handleFullscreenToggle}
-        className="ml-2 bg-white/80 hover:bg-white rounded-full p-2 shadow border border-gray-200 transition"
-        aria-label={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
-        type="button"
-      >
-        {isFullscreen ? <Minimize2 className="w-5 h-5 text-blue-700" /> : <Maximize2 className="w-5 h-5 text-blue-700" />}
-      </button>
+
+      <div className="flex items-center gap-2">
+        {translations.length > 0 && (
+          <button
+            onClick={handleCopyAll}
+            disabled={translations.length === 0}
+            className="bg-white/80 hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed rounded-full p-2 shadow border border-gray-200 transition"
+            aria-label="Copy all translations"
+            type="button"
+          >
+            <Copy className="w-5 h-5 text-blue-700" />
+          </button>
+        )}
+
+        <button
+          onClick={handleFullscreenToggle}
+          className="bg-white/80 hover:bg-white rounded-full p-2 shadow border border-gray-200 transition"
+          aria-label={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+          type="button"
+        >
+          {isFullscreen ? (
+            <Minimize2 className="w-5 h-5 text-blue-700" />
+          ) : (
+            <Maximize2 className="w-5 h-5 text-blue-700" />
+          )}
+        </button>
+      </div>
     </div>
 
   <div className="flex-1 overflow-y-auto bg-gray-50 rounded-lg p-3 sm:p-4 border border-gray-200">
@@ -245,8 +293,16 @@ function Translator() {
             <div className="bg-gray-100 p-3 rounded-md border border-gray-200">
               <p className="text-sm sm:text-base text-gray-800 whitespace-pre-wrap">{t.source}</p>
             </div>
-            <div className="bg-gray-100 p-3 rounded-md border border-gray-300">
-              <p className="text-sm sm:text-base text-gray-800 whitespace-pre-wrap font-medium">{t.translated}</p>
+            <div className="bg-gray-100 p-3 rounded-md border border-gray-300 flex items-center justify-between">
+              <p className="text-sm sm:text-base text-gray-800 whitespace-pre-wrap font-medium flex-1">{t.translated}</p>
+              <button
+                onClick={() => handleCopyOne(t.translated)}
+                className="ml-2 bg-white/80 hover:bg-white rounded-full p-1 shadow border border-gray-200 transition"
+                aria-label="Copy this translation"
+                type="button"
+              >
+                <Copy className="w-4 h-4 text-blue-700" />
+              </button>
             </div>
           </div>
         ))}
@@ -262,6 +318,11 @@ function Translator() {
 
         </div>
       </div>
+      {showToast && (
+        <div className="fixed top-6 right-6 z-[100] bg-black text-white px-4 py-2 rounded-md shadow-lg text-sm animate-fade-in">
+          {toastMessage}
+        </div>
+      )}
     </div>
   );
 }
