@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import translateText from "../chunks/ translateText";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "../components/ui/select";
 import {
@@ -13,7 +13,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "../components/ui/button";
-import { ArrowLeftRight } from "lucide-react";
+import { ArrowLeftRight, ArrowUp, ArrowDown } from "lucide-react";
+import { Maximize2, Minimize2 } from "lucide-react";
 import Loader from "../components/ui/loader";
 
 function Translator() {
@@ -22,6 +23,42 @@ function Translator() {
   const [sourceLang, setSourceLang] = useState("en");
   const [targetLang, setTargetLang] = useState("te");
   const [isTranslating, setIsTranslating] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const containerRef = useRef(null);
+
+  // Fullscreen logic
+  const handleFullscreenToggle = () => {
+    const el = containerRef.current;
+    if (!el) return;
+    if (!isFullscreen) {
+      if (el.requestFullscreen) el.requestFullscreen();
+      else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+      else if (el.mozRequestFullScreen) el.mozRequestFullScreen();
+      else if (el.msRequestFullscreen) el.msRequestFullscreen();
+    } else {
+      if (document.exitFullscreen) document.exitFullscreen();
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+      else if (document.msExitFullscreen) document.msExitFullscreen();
+    }
+  };
+
+  useEffect(() => {
+    const onFullscreenChange = () => {
+      const fsElement = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+      setIsFullscreen(!!fsElement);
+    };
+    document.addEventListener("fullscreenchange", onFullscreenChange);
+    document.addEventListener("webkitfullscreenchange", onFullscreenChange);
+    document.addEventListener("mozfullscreenchange", onFullscreenChange);
+    document.addEventListener("MSFullscreenChange", onFullscreenChange);
+    return () => {
+      document.removeEventListener("fullscreenchange", onFullscreenChange);
+      document.removeEventListener("webkitfullscreenchange", onFullscreenChange);
+      document.removeEventListener("mozfullscreenchange", onFullscreenChange);
+      document.removeEventListener("MSFullscreenChange", onFullscreenChange);
+    };
+  }, []);
 
   const handleTranslate = async () => {
     if (!input || !input.trim()) return;
@@ -59,9 +96,12 @@ function Translator() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8">
+    <div
+      ref={containerRef}
+      className={`min-h-screen bg-linear-to-br from-slate-50 to-blue-50 py-8 px-4 sm:px-6 lg:px-8 relative transition-all duration-300 ${isFullscreen ? "z-50 fixed inset-0 w-screen h-screen overflow-auto flex items-center justify-center" : ""}`}
+    >
       <Loader visible={isTranslating} text="Translating paragraphs..." />
-      <div className="max-w-7xl mx-auto">
+  <div className={`max-w-7xl mx-auto relative ${isFullscreen ? 'w-full' : ''}`}>
         <div className="text-center mb-8 px-2 sm:px-0">
           <h1 className="text-4xl sm:text-5xl font-semibold text-blue-800 mb-3">VoxVera</h1>
           <p className="hidden lg:block text-md lg:text-lg text-gray-600 max-w-2xl mx-auto">
@@ -69,9 +109,9 @@ function Translator() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+    <div className={`grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-stretch ${isFullscreen ? "lg:h-[80vh]" : ""}`}>
           {/* Input Panel */}
-          <div className="bg-white rounded-lg border border-gray-200 p-5 flex flex-col">
+          <div className={`bg-white h-[500px] rounded-lg border border-gray-200 p-5 flex flex-col transition-all duration-300 ${isFullscreen ? 'lg:min-h-[500px]' : ''}`}> 
             <div className="flex flex-col sm:flex-row gap-6 mb-6 sm:items-center justify-between">
               <div className="flex-1 bg-white p-4 rounded-lg border border-gray-300">
                 <label className="text-sm font-medium text-gray-700 block mb-2">Source Language</label>
@@ -99,7 +139,14 @@ function Translator() {
                   className="p-2 bg-white rounded-full border border-gray-300 hover:bg-gray-100 transition"
                   disabled={sourceLang === targetLang}
                 >
-                  <ArrowLeftRight className="h-5 w-5" />
+                  {/* Show left-right arrow on sm+ screens, up-down on xs */}
+                  <span className="hidden sm:inline">
+                    <ArrowLeftRight className="h-5 w-5" />
+                  </span>
+                  <span className="sm:hidden flex flex-col items-center justify-center">
+                    <ArrowUp className="h-4 w-4" />
+                    <ArrowDown className="h-4 w-4 -mt-1" />
+                  </span>
                 </Button>
               </div>
 
@@ -126,7 +173,7 @@ function Translator() {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Enter your text here... Use blank lines to separate paragraphs."
-              className="w-full h-52 sm:h-64 p-4 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-1 focus:ring-gray-400 text-sm bg-white"
+              className={`w-full p-4 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-1 focus:ring-gray-400 text-sm bg-white transition-all duration-300 ${isFullscreen ? 'h-80 sm:h-96' : 'h-52 sm:h-64'}`}
             />
 
             <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
@@ -170,14 +217,25 @@ function Translator() {
 
           {/* Output Panel */}
          <div className="bg-white h-[500px] rounded-lg border border-gray-200 p-5 flex flex-col">
-  <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4 flex items-center">
-    Translations
-    {translations.length > 0 && (
-      <span className="ml-2 text-sm sm:text-base text-gray-500 font-normal">
-        ({translations.length} paragraphs)
-      </span>
-    )}
-  </h2>
+
+    <div className="flex items-center justify-between mb-4">
+      <h2 className="text-lg sm:text-xl font-semibold text-gray-900 flex items-center">
+        Translations
+        {translations.length > 0 && (
+          <span className="ml-2 text-sm sm:text-base text-gray-500 font-normal">
+            ({translations.length} paragraphs)
+          </span>
+        )}
+      </h2>
+      <button
+        onClick={handleFullscreenToggle}
+        className="ml-2 bg-white/80 hover:bg-white rounded-full p-2 shadow border border-gray-200 transition"
+        aria-label={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+        type="button"
+      >
+        {isFullscreen ? <Minimize2 className="w-5 h-5 text-blue-700" /> : <Maximize2 className="w-5 h-5 text-blue-700" />}
+      </button>
+    </div>
 
   <div className="flex-1 overflow-y-auto bg-gray-50 rounded-lg p-3 sm:p-4 border border-gray-200">
     {translations.length > 0 ? (
